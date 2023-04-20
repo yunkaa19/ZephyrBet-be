@@ -2,6 +2,6 @@
 
 public class PlayerFundsDTO
 {
-    private double totalFundsIn { get; set; }
-    private double totalFundsOut { get; set; }
+    public double totalFundsIn { get; set; }
+    public double totalFundsOut { get; set; }
 }

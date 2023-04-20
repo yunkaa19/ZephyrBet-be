@@ -13,13 +13,13 @@ public class User
     [Required(ErrorMessage = "Email is required")]
     [DisplayName("Email Address")]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
-    public string Email { get; set; }
+    public string Email { get; set; } = String.Empty;
 
     [Required(ErrorMessage = "Password is required")]
     [DataType(DataType.Password)]
     [DisplayName("Password")]
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
-    public string Password { get; set; }
+    public string PasswordHash { get; set; } = String.Empty;
 
 
     public bool enabled;

@@ -2,6 +2,6 @@
 
 public class PaymentDTO
 {
-    private string Id { get; set; }
-    private string PlayerId { get; set; }
+    public string Id { get; set; }
+    public string PlayerId { get; set; }
 }

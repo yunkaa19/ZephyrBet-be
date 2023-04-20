@@ -6,8 +6,8 @@ namespace ZephyrBet.Models.DTOs;
 
 public class EditUserDTO
 {
-    private int UserID;
-    private UserType Type;
+    public int UserID;
+    public UserType Type;
 
     [Required]
     [DisplayName("Email Address")]

@@ -4,11 +4,11 @@ namespace ZephyrBet.Models.DTOs;
 
 public class PlayerDTO : UserDTO
 {
-    private string Name { get; set; }
-    private string Surname { get; set; }
-    private DateTime Birthday { get; set; }
-    private double Balance { get; set; }
-    private double WinFactor { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public DateTime Birthday { get; set; }
+    public double Balance { get; set; }
+    public double WinFactor { get; set; }
 
     public PlayerDTO()
     {

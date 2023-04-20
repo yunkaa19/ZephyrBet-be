@@ -47,7 +47,7 @@ public class PlayerService : IPlayerService
             return null;
         }
         
-        player.Password = request.Password;
+        player.PasswordHash = request.PasswordHash;
         player.enabled = request.enabled;
         player.Balance = request.Balance;
         

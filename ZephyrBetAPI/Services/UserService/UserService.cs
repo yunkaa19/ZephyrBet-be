@@ -45,7 +45,7 @@ public class UserService : IUserService
             return null;
         }
         User.Email = request.Email;
-        User.Password = request.Password;
+        User.PasswordHash = request.PasswordHash;
         User.Type = request.Type;
         User.enabled = request.enabled;
         
@@ -64,5 +64,16 @@ public class UserService : IUserService
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
         return await _context.Users.ToListAsync();
+    }
+
+
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null)
+        {
+            return null;
+        }
+        return user;
     }
 }

@@ -4,10 +4,18 @@ namespace ZephyrBet.Models.DTOs;
 
 public class UserDTO
 {
-    private int UserID { get; set; }
-    private string Email { get; set; }
-    private UserType Type { get; set; }
+    public int UserID { get; set; }
+    public required string Email { get; set; }
+    public required string Password { get; set; }
+    
+    public UserType Type { get; set; }
 
+    public UserDTO(string email, string password)
+    {
+        Email = email;
+        Password = password;
+    }
+    
     public UserDTO()
     {
     }
