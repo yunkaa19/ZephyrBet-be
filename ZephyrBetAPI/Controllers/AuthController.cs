@@ -5,11 +5,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ZephyrBet.Models.DTOs;
 using ZephyrBet.Models.Entity;
+using ZephyrBetAPI.Services.AuthService;
 using ZephyrBetAPI.Services.UserService;
 
 namespace ZephyrBetAPI.Controllers
@@ -20,17 +22,27 @@ namespace ZephyrBetAPI.Controllers
     {
         
         private readonly IConfiguration _configuration;
-        
+        private readonly IAuthService _authService;
         private readonly IUserService _usersService;
     
         
-        public AuthController(IConfiguration configuration, IUserService userService)
+        public AuthController(IConfiguration configuration, IUserService userService, IAuthService authService)
         {
             _configuration = configuration;
             _usersService = userService;
+            _authService = authService;
+            
         }
         
-        
+
+        [HttpGet, Authorize]
+        public ActionResult<string> GetEmail()
+        {
+            var userName = User?.Identity?.Name;
+            var role = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+            return Ok(new { userName, role });
+        }
+
         [HttpPost("register")]
         public ActionResult<User> Register(UserDTO request)
         {
@@ -82,6 +94,7 @@ namespace ZephyrBetAPI.Controllers
         {
             List<Claim> claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Type.ToString())
             };

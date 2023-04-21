@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using ZephyrBetAPI;
 using ZephyrBetAPI.Data;
+using ZephyrBetAPI.Services.AuthService;
 using ZephyrBetAPI.Services.PlayerService;
 using ZephyrBetAPI.Services.UserService;
 
@@ -15,9 +16,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpContextAccessor();
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 //Stripe
 builder.Services.AddStripeInfrastructure(builder.Configuration);
