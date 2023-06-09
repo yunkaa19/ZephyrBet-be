@@ -11,8 +11,8 @@ using ZephyrBetAPI.Data;
 namespace ZephyrBetAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230420032334_PlayerMigration")]
-    partial class PlayerMigration
+    [Migration("20230426104144_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,6 +21,26 @@ namespace ZephyrBetAPI.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("ZephyrBet.Models.Entity.Casino", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("Funds")
+                        .HasColumnType("double");
+
+                    b.Property<double>("Jackpot")
+                        .HasColumnType("double");
+
+                    b.Property<double>("WinCoefficient")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Casino");
+                });
 
             modelBuilder.Entity("ZephyrBet.Models.Entity.User", b =>
                 {
@@ -36,7 +56,7 @@ namespace ZephyrBetAPI.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
 

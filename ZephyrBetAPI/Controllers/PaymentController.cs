@@ -4,7 +4,7 @@ using ZephyrBetAPI.Services.StripeServices;
 
 namespace ZephyrBetAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class PaymentController : Controller
 {
     private readonly IStripeAppService _stripeService;

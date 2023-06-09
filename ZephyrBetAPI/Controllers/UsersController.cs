@@ -4,7 +4,7 @@ using ZephyrBet.Models.Entity;
 using ZephyrBetAPI.Services.UserService;
 
 namespace ZephyrBetAPI.Controllers;
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class UsersController : ControllerBase
 {

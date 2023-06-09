@@ -13,4 +13,5 @@ public class DataContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Player> Players { get; set; }
     
+    public DbSet<Casino> Casino { get; set; }
 }

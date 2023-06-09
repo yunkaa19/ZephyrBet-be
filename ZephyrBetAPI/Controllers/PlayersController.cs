@@ -9,7 +9,7 @@ using ZephyrBetAPI.Services.PlayerService;
 
 namespace ZephyrBetAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PlayersController : ControllerBase
     {

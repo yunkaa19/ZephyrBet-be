@@ -12,11 +12,12 @@ using Microsoft.IdentityModel.Tokens;
 using ZephyrBet.Models.DTOs;
 using ZephyrBet.Models.Entity;
 using ZephyrBetAPI.Services.AuthService;
+using ZephyrBetAPI.Services.PlayerService;
 using ZephyrBetAPI.Services.UserService;
 
 namespace ZephyrBetAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("Players/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -24,31 +25,48 @@ namespace ZephyrBetAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAuthService _authService;
         private readonly IUserService _usersService;
+        private readonly IPlayerService _playerService;
     
         
-        public AuthController(IConfiguration configuration, IUserService userService, IAuthService authService)
+        public AuthController(IConfiguration configuration, IUserService userService, IAuthService authService, IPlayerService playerService)
         {
             _configuration = configuration;
             _usersService = userService;
             _authService = authService;
-            
+            _playerService = playerService;
         }
         
 
         [HttpGet, Authorize]
-        public ActionResult<string> GetEmail()
+        public ActionResult<string> GetAllData()
         {
             var userName = User?.Identity?.Name;
             var role = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-            return Ok(new { userName, role });
+            var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
+            var email = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            
+            return Ok(new { userName, role, userId, email });
+            
         }
-
-        [HttpPost("register")]
-        public ActionResult<User> Register(UserDTO request)
+        
+        [HttpPost("decode")]
+        public ActionResult<string> DecodeToken(string token)
         {
-            User? user = new User();
-            user = _usersService.GetUserByEmail(request.Email).Result;
-            if (user != null)
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token);
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            var id = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid).Value;
+            return Ok(id);
+        }
+        
+        
+        //TODO: Send data to User Controller.
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> Register(PlayerDTO request)
+        {
+            Player? player = new Player();
+            player = (Player?)_usersService.GetUserByEmail(request.Email).Result;
+            if (player != null)
             {
                 return BadRequest("User already exists");
             }
@@ -56,15 +74,23 @@ namespace ZephyrBetAPI.Controllers
             {
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                user = new User
+                player = new Player()
                 {
                     Email = request.Email,
                     PasswordHash = passwordHash,
-                    Type = UserType.User
+                    Type = UserType.User,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    Birthday = request.Birthday,
+                    
+                    Balance = 0.00,
+                    
                 };
-                _usersService.AddUser(user);
+                var result = await _usersService.AddUser(player);
+                
+                string token = CreateToken(player);
 
-                return Ok(user);
+                return Ok(new { user = result, token = token });
             }
         }
         
@@ -92,12 +118,41 @@ namespace ZephyrBetAPI.Controllers
 
         private string CreateToken(User user)
         {
-            List<Claim> claims = new List<Claim>
+            var player = _playerService.GetPlayerById(user.Id).Result;
+            if (player == null)
             {
-                new Claim(ClaimTypes.Sid, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Type.ToString())
-            };
+                var admin = _usersService.GetUserById(user.Id).Result;
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Role, admin.Type.ToString()),
+                };
+            
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("AppSettings:Token").Value!));
+
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
+            
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return jwt;
+            }
+            if (player.Type == UserType.User)
+            {
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Sid, player.Id.ToString()),
+                    new Claim(ClaimTypes.Email, player.Email),
+                    new Claim(ClaimTypes.Role, player.Type.ToString()),
+                    new Claim(ClaimTypes.Name, player.Name),
+                };
+            
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:Token").Value!));
@@ -113,6 +168,31 @@ namespace ZephyrBetAPI.Controllers
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
+            }
+            else
+            {
+                User admin = player;
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Role, admin.Type.ToString()),
+                };
+            
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("AppSettings:Token").Value!));
+
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
+            
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return jwt;
+            }
         }
 
     }

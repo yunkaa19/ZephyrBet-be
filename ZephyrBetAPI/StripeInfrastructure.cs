@@ -3,18 +3,19 @@ using Stripe;
 using ZephyrBetAPI.Services.StripeServices;
 
 
-namespace ZephyrBetAPI;
-
-public static class StripeInfrastructure
+namespace ZephyrBetAPI
 {
-    public static IServiceCollection AddStripeInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static class StripeInfrastructure
     {
-        StripeConfiguration.ApiKey = configuration.GetValue<string>("StripeSettings:SecretKey");
+        public static IServiceCollection AddStripeInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        {
+            StripeConfiguration.ApiKey = configuration.GetValue<string>("StripeSettings:SecretKey");
 
-        return services
-            .AddScoped<CustomerService>()
-            .AddScoped<ChargeService>()
-            .AddScoped<TokenService>()
-            .AddScoped<IStripeAppService, StripeAppService>();
+            return services
+                .AddScoped<CustomerService>()
+                .AddScoped<ChargeService>()
+                .AddScoped<TokenService>()
+                .AddScoped<IStripeAppService, StripeAppService>();
+        }
     }
 }

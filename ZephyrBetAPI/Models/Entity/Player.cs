@@ -22,8 +22,8 @@ public class Player : User
     public DateTime Birthday { get; set; }
 
     public double Balance { get; set; }
-    public double WinFactor { get; set; }
 
-    public double LostBets { get; set; }
-    public double WonBets { get; set; }
+    public int Balls { get; set; }
+
+
 }
