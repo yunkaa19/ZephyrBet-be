@@ -1,0 +1,20 @@
+# This is a generated file. Not intended for manual editing.
+version: "3"
+services:
+  zephyrbe:
+    build:
+      context: "C:\\Users\\Yunuz\\Desktop\\Portfolio - sem 3\\Project\\ZephyrBetAPI\\\
+        ZephyrBetAPI"
+      dockerfile: "Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/ZephyrBetAPI.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    image: "zephyrbetapi:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\Yunuz\\Desktop\\Portfolio - sem 3\\Project\\ZephyrBetAPI\\ZephyrBetAPI:/app:rw"
+    working_dir: "/app"

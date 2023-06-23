@@ -1,0 +1,30 @@
+﻿version: "3"
+services:
+  zephyrbet-be:
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: "no"
+    networks:
+      jjt:
+        ipv4_address: 10.56.1.2
+  
+  zephyrbet-fe:
+    image: yunka19/zephapp:latest
+    ports:
+      - "5000:5000"
+    restart: always
+    depends_on:
+      - zephyrbet-be
+    networks:
+      jjt:
+        ipv4_address: 10.56.1.4
+
+networks:
+  jjt:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.56.1.0/24"

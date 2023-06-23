@@ -36,7 +36,7 @@ namespace ZephyrBetAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Casino");
+                    b.ToTable("Casino", (string)null);
                 });
 
             modelBuilder.Entity("ZephyrBet.Models.Entity.User", b =>
@@ -62,7 +62,7 @@ namespace ZephyrBetAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
