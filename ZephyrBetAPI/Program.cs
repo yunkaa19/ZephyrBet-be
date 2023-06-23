@@ -64,17 +64,13 @@ builder.Services.AddCors(options => options.AddPolicy(name: "NgOrigins",
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
+        policy.WithOrigins("http://localhost:5000")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     }));
 
-/*builder.Services.AddCors(options => 
-    options.AddPolicy(name: "NgOrigins",
-    policy =>
-    {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    }));*/
 
-
-        //policy.WithOrigins("http://10.56.1.4:5000").AllowAnyMethod().AllowAnyHeader();
 
 builder.Services.AddHttpContextAccessor();
 //Services
